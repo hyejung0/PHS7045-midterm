@@ -1,0 +1,40 @@
+---
+title: "create_lmer_fits"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{create_lmer_fits}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+```
+
+```{r setup}
+library(boots.lmer)
+```
+
+This vignette shows how to generate LMER fits using the `boots.lmer::boots.lmer` function from the bootstrap samples generated with the `boots.lmer::boots.samples` function. Please refer to 'create_bootstrap_samples' vignette to see detailed description of how to use `boots.samples` function.
+
+# Generate example data and bootstrap samples
+
+Here's an example data and its 4 bootstrap samples.:
+```{r , eval=FALSE}
+set.seed(1020)
+example.subject<-c("Sarah","John","Beth","Anna","Sarah","Sarah","Chris","Blake","John","Anna")
+example.dat<-data.frame("Y"=rnorm(n=length(example.subject)),
+                        "X1"=rpois(n=length(example.subject), lambda = 3),
+                        "X2"=rnorm(n=length(example.subject)),
+                        "X3"=rbeta(n=length(example.subject), shape1 = 3, shape2 = 0.5),
+                        "subjects"=example.subject) #generate example data
+
+
+output<-boots.samples(dat=example.dat,sub.id ="subjects",B=4) #a list of 4 bootstrap samples 
+
+```
+
