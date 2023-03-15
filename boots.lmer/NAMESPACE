@@ -2,4 +2,3 @@
 
 export(boots.lmer)
 export(boots.samples)
-import(data.table)

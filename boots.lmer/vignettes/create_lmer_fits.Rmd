@@ -24,7 +24,7 @@ This vignette shows how to generate LMER fits using the `boots.lmer::boots.lmer`
 # Generate example data and bootstrap samples
 
 Here's an example data and its 4 bootstrap samples.:
-```{r , eval=FALSE}
+```{r}
 set.seed(1020)
 example.subject<-c("Sarah","John","Beth","Anna","Sarah","Sarah","Chris","Blake","John","Anna")
 example.dat<-data.frame("Y"=rnorm(n=length(example.subject)),
@@ -37,4 +37,53 @@ example.dat<-data.frame("Y"=rnorm(n=length(example.subject)),
 output<-boots.samples(dat=example.dat,sub.id ="subjects",B=4) #a list of 4 bootstrap samples 
 
 ```
+
+
+<br>
+
+# Fit LMER to all bootstrap samples
+
+With the bootstrap samples, we fit the LMER.
+```{r}
+lmer.out<-boots.lmer(y="Y", X=c("X1","X2","X3"), boots.samples.list = output)
+
+lmer.out
+```
+
+
+
+<br>
+
+# Make an inference with LMER output
+
+We will generate 5,000 bootstrap samples and fit additive LMER model with random effects. And then we will generate a histogram of estimated effects of `X1`, `X2`, and `X3`.
+
+```{r cache=TRUE}
+set.seed(1204)
+output<-boots.samples(dat=example.dat,sub.id ="subjects",B=5000)
+
+```
+
+
+Fit LMER: 
+
+```{r cache=TRUE}
+lmer.out1<-boots.lmer(y="Y", X=c("X1","X2","X3"), boots.samples.list = output[[100]])
+```
+
+Fit LMER: ERROR!!
+
+Warning in parallel::mclapply(boots.samples.list, function(boots.dat) { :
+  all scheduled cores encountered errors in user code
+
+```{r}
+lmer.out2<-boots.lmer(y="Y", X=c("X1","X2","X3"), boots.samples.list = output[1:100])
+```
+
+From each fit, extract estimated effects
+
+```{r}
+summary(lmer.out[[1]])
+```
+
 

@@ -14,7 +14,6 @@
 #'                         "subjects"=example.subject)
 #' output<-boots.samples(dat=example.dat,sub.id = "subjects",B=4) #create 4 bootstrap samples
 #' output[[1]] #This is the first one!
-#' @import data.table
 #' @export
 boots.samples<-function(dat, sub.id,B){
 
@@ -49,8 +48,10 @@ boots.samples<-function(dat, sub.id,B){
       #bind the index and no.repeat.id. as rows
       temp.dat<-do.call(rbind, lapply(temp, data.table::data.table))
       complete.dat<-data.table::as.data.table(dat[temp.dat$index,])
-      complete.dat[,no.repeat.sub.id:=(temp.dat$no.repeat.id)] # add the new subject ID column, with no repetition
-    }
+      # complete.dat[,no.repeat.sub.id:=(temp.dat$no.repeat.id)] # add the new subject ID column, with no repetition
+      complete.dat[,"no.repeat.sub.id"]<-temp.dat$no.repeat.id
+      return(complete.dat)
+      }
     )
 
   output

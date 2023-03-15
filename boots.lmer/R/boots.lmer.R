@@ -9,13 +9,16 @@
 #' @examples
 #' example.subject<-c("Sarah","John","Beth","Anna","Sarah","Sarah","Chris","Blake","John","Anna")
 #' example.dat<-data.frame("Y"=rnorm(n=length(example.subject)),
-#'                        "X"=rpois(n=length(example.subject), lambda = 3),
-#'                        "subjects"=example.subject)
+#'                         "X1"=rpois(n=length(example.subject), lambda = 3),
+#'                         "X2"=rnorm(n=length(example.subject)),
+#'                         "X3"=rbeta(n=length(example.subject), shape1 = 3, shape2 = 0.5),
+#'                         "subjects"=example.subject)
 #' output<-boots.samples(dat=example.dat,sub.id = "subjects",B=4) #create 4 bootstrap samples
 #' lmer.out<-boots.lmer(y="Y", X=c("X1","X2","X3"), boots.samples.list = output)
 #' @export
 boots.lmer<-function(y,X,boots.samples.list,use.formula=NULL){
-library(data.table)
+
+
 
   lmer.fit<-function(y,X,dat,use.formula=NULL){#a function that fits one LMER
 
@@ -50,6 +53,8 @@ library(data.table)
 
 
   parallel::mclapply(boots.samples.list,function(boots.dat){
+    #Convert to data table to save time
+    boots.dat<-data.table::as.data.table(boots.dat)
     lmer.fit(y=y,X=X,dat=boots.dat)}
     ,mc.cores = num_workers)
 

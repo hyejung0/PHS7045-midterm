@@ -14,5 +14,5 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-Imports: 
+Depends: 
     data.table

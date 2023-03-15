@@ -14,7 +14,6 @@
 #'                         "subjects"=example.subject)
 #' output<-boots.samples(dat=example.dat,sub.id = "subjects",B=4) #create 4 bootstrap samples
 #' output[[1]] #This is the first one!
-#' @import data.table
 #' @export
 boots.samples<-function(dat, sub.id,B){
 
@@ -42,16 +41,26 @@ boots.samples<-function(dat, sub.id,B){
   output<-
     apply(no.repeat.id,2,function(x){
       temp<-
-        sapply(x,function(x_i){ #for each subject
+        lapply(x,function(x_i){ #for each subject
           index<-which(sub.id==stringr::word(x_i,1,sep = "\\__")) #index of original data where the subject id appears
           cbind(index, "no.repeat.id"=rep(x_i,length(index)))}) #get all observation for this particular subject.
 
-      #bind the index and no.repeat.id. as rows
-      temp.dat<-do.call(rbind, lapply(temp, data.table::data.table))
-      complete.dat<-data.table::as.data.table(dat[temp.dat$index,])
-      complete.dat[,no.repeat.sub.id:=(temp.dat$no.repeat.id)] # add the new subject ID column, with no repetition
+
+      temp.dat<-do.call(rbind, lapply(temp, data.frame))
+      complete.dat<-dat[temp.dat$index,]
+      complete.dat[,"no.repeat.sub.id"]<-temp.dat[,"no.repeat.id"]
+      return(complete.dat)
+
+      # #bind the index and no.repeat.id. as rows
+      # temp.dat<-do.call(rbind, lapply(temp, data.table::data.table))
+      # complete.dat<-data.table::as.data.table(dat[temp.dat$index,])
+      # # complete.dat[,no.repeat.sub.id:=(temp.dat$no.repeat.id)] # add the new subject ID column, with no repetition
+      # # complete.dat$no.repeat.sub.id<-temp.dat$no.repeat.id
+      # complete.dat[,"no.repeat.sub.id"]<-temp.dat$no.repeat.id
+      # return(complete.dat)
     }
     )
 
   output
 }
+
