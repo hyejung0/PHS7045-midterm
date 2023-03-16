@@ -7,4 +7,100 @@
 * this is package ‘boots.lmer’ version ‘0.0.0.9000’
 * package encoding: UTF-8
 * checking package namespace information ... OK
-* checking package dependencies ...
+* checking package dependencies ... OK
+* checking if this is a source package ... OK
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... NOTE
+Found the following non-portable file paths:
+  boots.lmer/vignettes/create_lmer_fits_cache/html/unnamed-chunk-4_e341fe21b0b89474dacb11012aaa1ba1.RData
+  boots.lmer/vignettes/create_lmer_fits_cache/html/unnamed-chunk-4_e341fe21b0b89474dacb11012aaa1ba1.rdb
+  boots.lmer/vignettes/create_lmer_fits_cache/html/unnamed-chunk-4_e341fe21b0b89474dacb11012aaa1ba1.rdx
+  boots.lmer/vignettes/create_lmer_fits_cache/html/unnamed-chunk-5_3af412eb2ee0d04361f2b00e5567bfb6.RData
+  boots.lmer/vignettes/create_lmer_fits_cache/html/unnamed-chunk-5_3af412eb2ee0d04361f2b00e5567bfb6.rdb
+  boots.lmer/vignettes/create_lmer_fits_cache/html/unnamed-chunk-5_3af412eb2ee0d04361f2b00e5567bfb6.rdx
+
+Tarballs are only required to store paths of up to 100 bytes and cannot
+store those of more than 256 bytes, with restrictions including to 100
+bytes for the final component.
+See section ‘Package structure’ in the ‘Writing R Extensions’ manual.
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘boots.lmer’ can be installed ... OK
+* checking installed package size ... OK
+* checking package directory ... OK
+* checking for future file timestamps ... OK
+* checking ‘build’ directory ... OK
+* checking DESCRIPTION meta-information ... WARNING
+Non-standard license specification:
+  `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+  license
+Standardizable: FALSE
+* checking top-level files ... OK
+* checking for left-over files ... OK
+* checking index information ... OK
+* checking package subdirectories ... OK
+* checking R files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking whether the namespace can be loaded with stated dependencies ... OK
+* checking whether the namespace can be unloaded cleanly ... OK
+* checking dependencies in R code ... WARNING
+'::' or ':::' imports not declared from:
+  ‘lme4’ ‘rlang’ ‘stringr’
+Package in Depends field not imported from: ‘data.table’
+  These packages need to be imported from (in the NAMESPACE file)
+  for when this namespace is loaded but not attached.
+* checking S3 generic/method consistency ... OK
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... NOTE
+boots.lmer : lmer.fit: no visible global function definition for
+  ‘as.formula’
+boots.lmer : lmer.fit: no visible global function definition for
+  ‘formula’
+boots.lmer : lmer.fit: no visible global function definition for ‘lm’
+Undefined global functions or variables:
+  as.formula formula lm
+Consider adding
+  importFrom("stats", "as.formula", "formula", "lm")
+to your NAMESPACE file.
+* checking Rd files ... OK
+* checking Rd metadata ... OK
+* checking Rd line widths ... OK
+* checking Rd cross-references ... OK
+* checking for missing documentation entries ... OK
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking installed files from ‘inst/doc’ ... OK
+* checking files in ‘vignettes’ ... OK
+* checking examples ... OK
+* checking for unstated dependencies in vignettes ... NOTE
+'::' or ':::' import not declared from: ‘lme4’
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking re-building of vignette outputs ... WARNING
+Error(s) in re-building vignettes:
+  ...
+--- re-building ‘create_bootstrap_samples.Rmd’ using rmarkdown
+--- finished re-building ‘create_bootstrap_samples.Rmd’
+
+--- re-building ‘create_lmer_fits.Rmd’ using rmarkdown
+Quitting from lines 78-86 (create_lmer_fits.Rmd) 
+Error: processing vignette 'create_lmer_fits.Rmd' failed with diagnostics:
+there is no package called 'lattice'
+--- failed re-building ‘create_lmer_fits.Rmd’
+
+SUMMARY: processing the following file failed:
+  ‘create_lmer_fits.Rmd’
+
+Error: Vignette re-building failed.
+Execution halted
+
+* checking for non-standard things in the check directory ... OK
+* checking for detritus in the temp directory ... OK
+* DONE
+Status: 3 WARNINGs, 3 NOTEs

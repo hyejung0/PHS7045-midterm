@@ -3,8 +3,10 @@ title: "create_bootstrap_samples"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{create_bootstrap_samples}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
@@ -13,8 +15,6 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-
-options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 
@@ -67,20 +67,5 @@ output
 # knitr::kable(output,caption = "Table 2. Four boostrap samples of example.dat data sets. The sampling unit is subject, hence the number of rows of each data set is expected to be different from one another.",row.names = FALSE)
 ```
 
-The output is a list of 4, each list being a data frame. Each data frame contains two columns: **index** and **no.repeat.id.** We will explain each column using the first bootstrap sample:
-
-```{r}
-
-output[[1]]
-# knitr::kable(output[[1]],caption = "Table 2.A. The first bootstrap sample",row.names = FALSE)
-```
-
-In the first sample, total 6 subjects are chosen, but the number of rows is different from the original data set. The original data set has 10 rows, but the first bootstrap sample has 11 rows. This is because again, our sample of unit is subject, where there are different number of observations for each subject.   
-
-The **index** column shows the row number of the original data set for each row of the bootstrap sample. For example, the first two rows belong to John, with index 2 and 9. We can get the bootstrap data using these index. 
-
-```{r}
-# example.dat[output[[1]]$index,]
-```
-
-The **index** can be used to select the right observation from the original data set. However, if we are to use the subjects as a random effect in our linear mixed effects model, the subjects has to be distinguished each time it is chosen. For example, in our first bootstrap sample, John is chosen 3 times. If we use `John` as is in the random effects, R will not be able to distinguish these 3 different `John`s. Therefore, we need to name the 3 `John`s differently. If we look at **no.repeat.id** column in Table 2.A, the different names are assigned with `__#` format, where `#` is the number of times the subject was sampled. Hence, we see that we have `John__1`, `John__2`, and `John__3` to take into account `John` as 3 different subjects.
+The output is a list of 4, each list being a bootstrap sample data frame. Each data frame also contains a new column `no.repeat.sub.id`. This column is the same as `subject` column, except it has trailing `__#` where `#` shows the number of times the subject was included in the bootstrap sampling. 
+For example, in the first bootstrap sampling, `John__1`, `John__2`, and `John__3` appear. Therefore, John was collected 3 times, and we can use `no.repeat.sub.id` for random effects to correctly take into account that there are three different Johns.

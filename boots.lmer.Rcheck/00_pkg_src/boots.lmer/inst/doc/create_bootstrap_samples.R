@@ -5,8 +5,6 @@ knitr::opts_chunk$set(
 )
 
 
-options(rmarkdown.html_vignette.check_title = FALSE)
-
 ## ----setup--------------------------------------------------------------------
 library(boots.lmer)
 
@@ -25,12 +23,4 @@ output<-boots.samples(dat = example.dat, sub.id = "subjects",B=4)
 
 output
 # knitr::kable(output,caption = "Table 2. Four boostrap samples of example.dat data sets. The sampling unit is subject, hence the number of rows of each data set is expected to be different from one another.",row.names = FALSE)
-
-## -----------------------------------------------------------------------------
-
-output[[1]]
-# knitr::kable(output[[1]],caption = "Table 2.A. The first bootstrap sample",row.names = FALSE)
-
-## -----------------------------------------------------------------------------
-# example.dat[output[[1]]$index,]
 

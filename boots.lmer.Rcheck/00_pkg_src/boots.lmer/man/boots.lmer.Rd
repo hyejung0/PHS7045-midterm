@@ -4,7 +4,7 @@
 \alias{boots.lmer}
 \title{Bootstrap Sampled Linear Mixed Effects Models (LMERs)}
 \usage{
-boots.lmer(y, X, boots.samples.list, use.formula = NULL)
+boots.lmer(y, X, boots.samples.list, use.formula = NULL, num_workers = NULL)
 }
 \arguments{
 \item{y}{character string. Name of column in each data.table of boots.samples.list, to be used as the outcome in LMER.}
@@ -14,6 +14,8 @@ boots.lmer(y, X, boots.samples.list, use.formula = NULL)
 \item{boots.samples.list}{boots.samples output.}
 
 \item{use.formula}{a vector of class formula. This is to be used in lmer fit. If not provided, then a basic additive fixed effects model with random effect of (1|no.repeat.sub.id) will be fit.}
+
+\item{num_workers}{integer. A number of cores to use for parallel computing.}
 }
 \value{
 A list of length B, of linear mixed effects model fits.
@@ -24,8 +26,10 @@ Bootstrap Sampled Linear Mixed Effects Models (LMERs)
 \examples{
 example.subject<-c("Sarah","John","Beth","Anna","Sarah","Sarah","Chris","Blake","John","Anna")
 example.dat<-data.frame("Y"=rnorm(n=length(example.subject)),
-                       "X"=rpois(n=length(example.subject), lambda = 3),
-                       "subjects"=example.subject)
+                        "X1"=rpois(n=length(example.subject), lambda = 3),
+                        "X2"=rnorm(n=length(example.subject)),
+                        "X3"=rbeta(n=length(example.subject), shape1 = 3, shape2 = 0.5),
+                        "subjects"=example.subject)
 output<-boots.samples(dat=example.dat,sub.id = "subjects",B=4) #create 4 bootstrap samples
 lmer.out<-boots.lmer(y="Y", X=c("X1","X2","X3"), boots.samples.list = output)
 }

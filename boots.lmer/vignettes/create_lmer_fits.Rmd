@@ -30,7 +30,7 @@ example.subject<-c("Sarah","John","Beth","Anna","Sarah","Sarah","Chris","Blake",
 example.dat<-data.frame("Y"=rnorm(n=length(example.subject)),
                         "X1"=rpois(n=length(example.subject), lambda = 3),
                         "X2"=rnorm(n=length(example.subject)),
-                        "X3"=rbeta(n=length(example.subject), shape1 = 3, shape2 = 0.5),
+                        "X3"=rbeta(n=length(example.subject), shape1 = 3, shape2 = 0.5)+rnorm(length(example.subject), mean=6),
                         "subjects"=example.subject) #generate example data
 
 
@@ -68,22 +68,49 @@ output<-boots.samples(dat=example.dat,sub.id ="subjects",B=5000)
 Fit LMER: 
 
 ```{r cache=TRUE}
-lmer.out1<-boots.lmer(y="Y", X=c("X1","X2","X3"), boots.samples.list = output[[100]])
+lmer.out<-boots.lmer(y="Y", X=c("X1","X2","X3"), boots.samples.list = output)
 ```
 
-Fit LMER: ERROR!!
 
-Warning in parallel::mclapply(boots.samples.list, function(boots.dat) { :
-  all scheduled cores encountered errors in user code
+From each fit, we will extract estimated effects and show its histogram. Note that if the data set only contained unique observation (no repeated measure of the same subject), then simply, linear regression is fitted instead of LMER. 
 
 ```{r}
-lmer.out2<-boots.lmer(y="Y", X=c("X1","X2","X3"), boots.samples.list = output[1:100])
+coef.out<-
+lapply(lmer.out,function(fit){
+  if(class(fit)=="lm"){ #If linear model was fit, use below function
+    coef(fit)
+  }else{ #IF 
+    lme4::fixef(fit)
+  }
+})
 ```
-
-From each fit, extract estimated effects
+Note that when fitting LMER, there might be lack of ranks in fixed effects matrix, so the `lme4::lmer` function can drop one variable. We will show an example:
 
 ```{r}
-summary(lmer.out[[1]])
+
+#extract coefficient estimate for X3
+this.X3<-
+lapply(coef.out,function(x){
+  x["X3"]
+})
+est.X3<-unlist(this.X3)
+
+#Here the number of NA's
+sum(is.na(est.X3))
+
+#index of all whose estimated effect of X3 is NA
+which(is.na(est.X3)) 
 ```
 
+Let's take a look at 27th fit
+
+```{r}
+lmer.out[[27]]
+```
+
+Under the fit warnings, it says "fixed-effect model matrix is rank deficient so dropping 1 column". Now we plot histogram of the estimated effects of `X3`.
+
+```{r}
+hist(est.X3)
+```
 

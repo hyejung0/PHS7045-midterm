@@ -1,0 +1,14 @@
+--- re-building ‘create_bootstrap_samples.Rmd’ using rmarkdown
+--- finished re-building ‘create_bootstrap_samples.Rmd’
+
+--- re-building ‘create_lmer_fits.Rmd’ using rmarkdown
+Quitting from lines 78-86 (create_lmer_fits.Rmd) 
+Error: processing vignette 'create_lmer_fits.Rmd' failed with diagnostics:
+there is no package called 'lattice'
+--- failed re-building ‘create_lmer_fits.Rmd’
+
+SUMMARY: processing the following file failed:
+  ‘create_lmer_fits.Rmd’
+
+Error: Vignette re-building failed.
+Execution halted

@@ -12,8 +12,8 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
-Depends: data.table, lme4, rlang, parallel, stringr
+Depends: R (>= 3.5.0), data.table
 NeedsCompilation: no
-Packaged: 2023-03-14 22:14:56 UTC; u1317537
+Packaged: 2023-03-16 01:59:32 UTC; u1317537
 Author: Hyejung Lee [aut, cre] (<https://orcid.org/0000-0002-5293-4134>)
 Maintainer: Hyejung Lee <hyejung.lee@utah.edu>
