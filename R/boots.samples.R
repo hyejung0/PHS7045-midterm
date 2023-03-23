@@ -1,4 +1,5 @@
-
+#' @import lme4 rlang
+NULL
 
 #' Bootstrap Samples
 #' @return A list of length B, of matrices with index and subjects

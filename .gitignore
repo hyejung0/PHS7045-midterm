@@ -6,3 +6,4 @@
 # We don't want these extensions
 *.Rcheck
 *.tar.gz
+.DS_Store
