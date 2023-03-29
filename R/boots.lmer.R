@@ -18,7 +18,7 @@
 #' output<-boots.samples(dat=example.dat,sub.id = "subjects",B=4) #create 4 bootstrap samples
 #' lmer.out<-boots.lmer(y="Y", X=c("X1","X2","X3"), dat=example.dat, boots.samples.list = output)
 #' @export
-boots.lmer<-function(y,X,dat,boots.samples.list,use.formula=NULL, num_workers=NULL){
+boots.lmer<-function(y,X,dat,boots.samples.list,use.formula=NULL, num_workers=2L){
 
 
 
@@ -45,25 +45,28 @@ boots.lmer<-function(y,X,dat,boots.samples.list,use.formula=NULL, num_workers=NU
 
   }
 
-  if(is.null(num_workers)){
-    #CRAN limits the number of cores available to packages to 2, for performance reasons. There was a thread in the mailing list, I believe, but I can't find it right now.
-    chk <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
+  #If unix, use forking
+  if(.Platform$OS.type=="unix"){
+    parallel::mclapply(boots.samples.list,function(boots.dat){
+      #Convert to data table to save time
+      lmer.fit(y=y,X=X,dat=boots.dat)}
+      ,mc.cores = num_workers)
+  }else{ #If windows, use PSOCK.
 
-    if (nzchar(chk) && chk == "TRUE") {
-      # use 2 cores in CRAN/Travis/AppVeyor
-      num_workers <- 2L
-    } else {
-      # use all cores in devtools::test()
-      num_workers <- parallel::detectCores()
-    }
+    cl <- parallel::makePSOCKcluster(num_workers) #number of clusters
+    on.exit(parallel::stopCluster(cl))
+    parallel::clusterExport(cl, "lmer.fit")
+    # parallel::clusterEvalQ(cl, {
+    #   library(boots.lmer)
+    #   library(abind)
+    #   X <- 1:10
+    # })
 
+    parallel::parLapply(cl, boots.samples.list,function(boots.dat){
+      #Convert to data table to save time
+      lmer.fit(y=y,X=X,dat=boots.dat)})
   }
 
 
-
-  parallel::mclapply(boots.samples.list,function(boots.dat){
-    #Convert to data table to save time
-    lmer.fit(y=y,X=X,dat=boots.dat)}
-    ,mc.cores = num_workers)
 
 }

@@ -62,7 +62,8 @@ This is how you do it:
 
 ```r
 set.seed(1204)
-bootsamplesdata<-boots.samples(dat=example.dat,sub.id ="subjects",B=100)#change back to 5000 later
+boots.sapmle1<-boots.samples(dat=example.dat,sub.id ="subjects",B=5000)#change back to 5000 later
+bootsamplesdata<-boots.lmer(y="Y", X=c("X1","X2","X3"), boots.samples.list = boots.sapmle1)
 usethis::use_data(bootsamplesdata)
 ```
 
@@ -74,8 +75,7 @@ data(bootsamplesdata, package="boots.lmer")
 
 Fit LMER: 
 
-```{r cache=TRUE}
-lmer.out<-boots.lmer(y="Y", X=c("X1","X2","X3"), boots.samples.list = output)
+```{r}
 ```
 
 
