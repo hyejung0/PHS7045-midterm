@@ -17,11 +17,8 @@ VignetteBuilder: knitr
 Imports:
     rlang
 Depends: 
-<<<<<<< HEAD:boots.lmer/DESCRIPTION
     data.table,
     R (>= 2.10)
-LazyData: true
-=======
     lme4,
     data.table
->>>>>>> e5c145b995dbfb05056647d87530fd11503a7050:DESCRIPTION
+LazyData: true
