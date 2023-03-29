@@ -15,4 +15,6 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr
 Depends: 
-    data.table
+    data.table,
+    R (>= 2.10)
+LazyData: true
