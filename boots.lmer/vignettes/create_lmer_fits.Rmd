@@ -60,7 +60,7 @@ We will generate 5,000 bootstrap samples and fit additive LMER model with random
 
 ```{r cache=TRUE}
 set.seed(1204)
-output<-boots.samples(dat=example.dat,sub.id ="subjects",B=5000)
+output<-boots.samples(dat=example.dat,sub.id ="subjects",B=100)#change back to 5000 later
 
 ```
 

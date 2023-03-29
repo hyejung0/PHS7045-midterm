@@ -13,7 +13,7 @@
 #'                         "X3"=rbeta(n=length(example.subject), shape1 = 3, shape2 = 0.5),
 #'                         "subjects"=example.subject)
 #' output<-boots.samples(dat=example.dat,sub.id = "subjects",B=4) #create 4 bootstrap samples
-#' output[[1]] #This is the first one!
+#' output[[1]] #This is the first sample. A data table with two columns, an index column and the new subject names
 #' @export
 boots.samples<-function(dat, sub.id,B){
 
@@ -45,11 +45,19 @@ boots.samples<-function(dat, sub.id,B){
           index<-which(sub.id==stringr::word(x_i,1,sep = "\\__")) #index of original data where the subject id appears
           cbind(index, "no.repeat.id"=rep(x_i,length(index)))}) #get all observation for this particular subject.
 
+      #####Return just index and new naming#####
+      dat_return<-Reduce("rbind",temp)
+      dat_return<-data.table::as.data.table(dat_return)
+      dat_return[,index:=as.numeric(index)]
+      dat_return
+      ##########################################
 
-      temp.dat<-do.call(rbind, lapply(temp, data.frame))
-      complete.dat<-dat[temp.dat$index,]
-      complete.dat[,"no.repeat.sub.id"]<-temp.dat[,"no.repeat.id"]
-      return(complete.dat)
+      ###### return data frame ######
+      # temp.dat<-do.call(rbind, lapply(temp, data.frame))
+      # complete.dat<-dat[temp.dat$index,]
+      # complete.dat[,"no.repeat.sub.id"]<-temp.dat[,"no.repeat.id"]
+      # return(complete.dat)
+      ##########################################
 
       # #bind the index and no.repeat.id. as rows
       # temp.dat<-do.call(rbind, lapply(temp, data.table::data.table))
