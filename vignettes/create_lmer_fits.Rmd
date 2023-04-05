@@ -58,17 +58,24 @@ lmer.out
 
 We will generate 5,000 bootstrap samples and fit additive LMER model with random effects. And then we will generate a histogram of estimated effects of `X3`.
 
-```{r cache=TRUE}
-set.seed(1204)
-output<-boots.samples(dat=example.dat,sub.id ="subjects",B=5000)
+This is how you do it:
 
+```r
+set.seed(1204)
+boots.sapmle1<-boots.samples(dat=example.dat,sub.id ="subjects",B=5000)#change back to 5000 later
+bootsamplesdata<-boots.lmer(y="Y", X=c("X1","X2","X3"), boots.samples.list = boots.sapmle1)
+usethis::use_data(bootsamplesdata)
 ```
 
+But we will loaded from the package
+
+```{r}
+data(bootsamplesdata, package="boots.lmer")
+```
 
 Fit LMER: 
 
-```{r cache=TRUE}
-lmer.out<-boots.lmer(y="Y", X=c("X1","X2","X3"), boots.samples.list = output)
+```{r}
 ```
 
 
