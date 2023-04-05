@@ -28,6 +28,7 @@ jobs:
 
       - name: dependencies
         run: |
-          Rscript --vanilla -e 'install.packages(c("rmarkdown", "rlang", "lme4", "data.table"))'
+          Rscript --vanilla -e \
+            'install.packages(c("rmarkdown", "rlang", "lme4", "data.table"), repos = "https://cloud.r-project.org")'
 
       - uses: r-lib/actions/check-r-package@v2
