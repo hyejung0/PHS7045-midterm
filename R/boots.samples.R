@@ -7,8 +7,9 @@ NULL
 #' @param sub.id String vector, the column name of the subject ID's.
 #' @param B Natural number. Number of bootstrap samples to create.
 #' @examples
-#' example.subject<-c("Sarah","John","Beth","Anna","Sarah","Sarah","Chris","Blake","John","Anna")
-#' example.dat<-data.frame("Y"=rnorm(n=length(example.subject)),
+#' set.seed(1249)
+#' subjects<-c("Sarah","John","Beth","Anna","Chris","Blake")
+#' example.subject<-sample(subjects, size = 50,replace = TRUE)#' example.dat<-data.frame("Y"=rnorm(n=length(example.subject)),
 #'                         "X1"=rpois(n=length(example.subject), lambda = 3),
 #'                         "X2"=rnorm(n=length(example.subject)),
 #'                         "X3"=rbeta(n=length(example.subject), shape1 = 3, shape2 = 0.5),

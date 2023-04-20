@@ -9,7 +9,9 @@
 #' @param use.formula a vector of class formula. This is to be used in lmer fit. If not provided, then a basic additive fixed effects model with random effect of (1|no.repeat.sub.id) will be fit.
 #' @param num_workers integer. A number of cores to use for parallel computing.
 #' @examples
-#' example.subject<-c("Sarah","John","Beth","Anna","Sarah","Sarah","Chris","Blake","John","Anna")
+#' set.seed(1249)
+#' subjects<-c("Sarah","John","Beth","Anna","Chris","Blake")
+#' example.subject<-sample(subjects, size = 50,replace = TRUE)
 #' example.dat<-data.frame("Y"=rnorm(n=length(example.subject)),
 #'                         "X1"=rpois(n=length(example.subject), lambda = 3),
 #'                         "X2"=rnorm(n=length(example.subject)),
@@ -22,24 +24,29 @@ boots.lmer<-function(y,X,dat,boots.samples.list,use.formula=NULL, num_workers=2L
 
 
 
-  lmer.fit<-function(y,X,dat,use.formula=NULL){#a function that fits one LMER
+
+  lmer.fit<-function(y,X,dat,one.boot.sample,use.formula=NULL){#a function that fits one LMER
 
 
+    if(length(unique(one.boot.sample$no.repeat.id))==nrow(one.boot.sample)){ #If no subjects are repeating, no need to fit LMER, use LM.
+      return(simpleError(message = "Not a repeated sample. Did not fit LMER"))
+    }
+
+    #generate bootstrap data
+    dat<-dat[one.boot.sample$index,]
+    dat$no.repeat.id<-one.boot.sample$no.repeat.id
+
+    #If longitudinal data, then fit LMER model.
     if(is.null(use.formula)){#if we are not provided with specific formula, then create our own
       X.names<-lapply(X, as.name)
-      if(length(X)>1){
-        X.names<-paste(X.names, collapse=" + ")
+      if(length(X)>1){ #generate X1+X2+...
         X.formula<-as.formula(paste0("~ ", paste(X.names, collapse=" + ")))
+      }else{#If we only have one covariate, make it a formula as well
+        X.formula<-as.formula(paste("~",X.names))
       }
-
-      if(length(unique(dat$no.repeat.sub.id))==nrow(dat)){ #If no subjects are repeating, no need to fit LMER, use LM.
-        use.formula<-formula(paste0("`",rlang::quo_name(y),"`",rlang::quo_name(X.formula)))
-        lm(use.formula,data=dat)
-      }else{
-        use.formula<-formula(paste0("`",rlang::quo_name(y),"`",rlang::quo_name(X.formula),"+(1|no.repeat.sub.id)"))
-        lme4::lmer(use.formula,data=dat, REML=FALSE)
-      }
-    }else{ #If we are provided with formula....
+      use.formula<-formula(paste0("`",rlang::quo_name(y),"`",rlang::quo_name(X.formula),"+(1|no.repeat.id)"))
+      lme4::lmer(use.formula,data=dat, REML=FALSE)
+    }else{ #If we are provided with formula, then fit the LMER using the formula
       lme4::lmer(use.formula,data=dat, REML=FALSE)
     }
 
@@ -47,25 +54,105 @@ boots.lmer<-function(y,X,dat,boots.samples.list,use.formula=NULL, num_workers=2L
 
   #If unix, use forking
   if(.Platform$OS.type=="unix"){
-    parallel::mclapply(boots.samples.list,function(boots.dat){
+    all.fits<-parallel::mclapply(boots.samples.list,function(boots.dat){
       #Convert to data table to save time
-      lmer.fit(y=y,X=X,dat=boots.dat)}
+      res <- tryCatch(lmer.fit(y=y,X=X,dat=dat,one.boot.sample=boots.dat), error = function(e) e)
+      return(res)
+      }
       ,mc.cores = num_workers)
   }else{ #If windows, use PSOCK.
 
     cl <- parallel::makePSOCKcluster(num_workers) #number of clusters
-    on.exit(parallel::stopCluster(cl))
+    on.exit(parallel::stopCluster(cl)) #Close parapllel once done running
     parallel::clusterExport(cl, "lmer.fit")
-    # parallel::clusterEvalQ(cl, {
-    #   library(boots.lmer)
-    #   library(abind)
-    #   X <- 1:10
-    # })
 
-    parallel::parLapply(cl, boots.samples.list,function(boots.dat){
+    all.fits<-parallel::parLapply(cl, boots.samples.list,function(boots.dat){
       #Convert to data table to save time
-      lmer.fit(y=y,X=X,dat=boots.dat)})
+      res <- tryCatch(lmer.fit(y=y,X=X,dat=boots.dat), error = function(e) e)
+
+      if (inherits(res, "error")) {
+        # ""
+        return(res)
+      } else {
+        return(res)
+      }
+
+      })
   }
+
+
+  #count the number of errors and print it off (if there were errors)
+  if(.Platform$OS.type=="unix"){ #If linux
+    MyError<-parallel::mclapply(all.fits,function(fit){
+      if(inherits(fit,"simpleError")){
+        TRUE
+      }else{
+        FALSE
+      }
+    }
+    ,mc.cores = num_workers)
+
+  }else{ #If windows
+    cl <- parallel::makePSOCKcluster(num_workers) #number of clusters
+    on.exit(parallel::stopCluster(cl)) #Close parallel once done running
+    parallel::clusterExport(cl, "all.fits")
+
+    MyError<-parallel::parLapply(cl, all.fits,function(fit){
+      if(inherits(fit,"simpleError")){
+        TRUE
+      }else{
+        FALSE
+      }
+
+    })
+  }
+
+  MyError<-do.call("c",MyError)
+  Error.Index<-NA
+  if(sum(MyError)>0){ #If there were errors, print that there were errors
+    #print(paste0("There were ",sum(MyError)," error(s) from LMER fitting, and they were omitted from the analyses"))
+    Error.Index<-which(MyError) #Save the index of bootstrap samples that resulted in error. Return it
+  }
+
+  # return(list("MyError"=MyError,
+  #             "all.fits"=all.fits))
+  #If all bootstrap samples were errors, then exit the function
+  if(sum(MyError)==length(all.fits)){
+    stop("All bootstrap samples had errors while fitting LMER function. Therefore, no inference could be made.")
+  }
+
+  #If there were at least one LMER fit that was successful, then extract the beta coefficients and make inference about it.
+  all.fits<-all.fits[!MyError]
+
+  #Extract all coefficients
+  coef.out<-lapply(all.fits,function(fit){lme4::fixef(fit)})
+
+  #extract coefficient estimate for covariates in X
+  est.betas<-lapply(X,function(cov){ #For each covariate X_i,
+    this.cov<-lapply(coef.out, function(beta){ #Extracted the estimated betas
+      beta[cov]
+    })
+    this.cov<-unlist(this.cov)
+  })
+
+  #Generate table to print. Mean, bootstrap SD, 95% CI
+  output.dat<-lapply(est.betas,function(betas){
+    Mean<-mean(betas,na.rm=TRUE)
+    my.sd<-sd(betas, na.rm = TRUE)
+    c(Mean,my.sd,Mean+c(-1,1)*qnorm(0.975)*my.sd)
+  })
+  output.dat<-do.call(rbind,output.dat)
+  colnames(output.dat)<-c("Mean","SD","2.5%","97.5%")
+  rownames(output.dat)<-X
+
+  #print(output.dat)
+
+
+  structure(list("Error.Index"=Error.Index, #index of bootstrap samples that resulted in error. NA if there were no errors.
+                 "all.fits"=all.fits,
+                 "est.betas"=est.betas,
+                 "Estimates"=output.dat)
+            , class = "boots.lmer.pkg_bootsout")
 
 
 
