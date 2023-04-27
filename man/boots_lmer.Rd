@@ -21,6 +21,7 @@ boots_lmer(y, X, dat, boots.samples.list, use.formula = NULL, num_workers = 2L)
 }
 \value{
 A list of length 4.
+
 \code{Error.Index} is a vector of logicals. The corresponding \code{boots.samples.list} input where \code{Error.Index ==TRUE} had an error fitting the lme4::lmer function.
 
 \code{est.betas} is a list of length same as the \code{X} input. Each list shows estimated coefficient of the corresponding covariates using bootstrap samples.
@@ -28,7 +29,7 @@ A list of length 4.
 \code{Estimates} is a data frame of the bootstrap output. It contains "Mean", "SD", "2.5\%", and "97.5\%" columns.
 The "Mean" column is calculated by using \code{\link[base:mean]}{mean} function on the \code{est.betas}.
 The "SD" column is calculated by using \code{\link[base:sd]}{sd} function on the \code{est.betas}.
-The "2.5\%" and "97.5\%" confidence intervals are calculated using \code{Mean + c(0-1,1)*qnorm(0.975)*SD}.
+The "2.5\%" and "97.5\%" confidence intervals are calculated using \code{Mean + c(-1, 1)*qnorm(0.975)*SD}.
 }
 \description{
 The function returns a fitted LMER model using bootstrap sample data, and returns inference about the fits.
@@ -44,4 +45,11 @@ example.dat<-data.frame("Y"=rnorm(n=length(example.subject)),
                         "subjects"=example.subject)
 output<-boots_samples(dat=example.dat,sub.id = "subjects",B=4) #create 4 bootstrap samples
 lmer.out<-boots_lmer(y="Y", X=c("X1","X2","X3"), dat=example.dat, boots.samples.list = output)
+
+##Print the summary
+summary(lmer.out)
+
+##Boxplot of the estimated coefficients
+plot(lmer.out)
+
 }

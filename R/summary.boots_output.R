@@ -4,15 +4,15 @@
 #' @param x An object of class \code{boots_output}.
 #' @param ... Further arguments passed to
 
-summary.boots_output<- function(x,...) {
+summary.boots_output<- function(object,...) {
 
 
   #Print the error message
-  cat(paste(x$error.message,"\n \n"))
+  cat(paste(object$error.message,"\n \n"))
 
   #print the table
   cat("Bootstreap estimaes summary: \n")
-  print(x$Estimates)
+  print(object$Estimates)
 
 
 }
