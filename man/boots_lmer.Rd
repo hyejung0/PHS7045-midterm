@@ -27,8 +27,8 @@ A list of length 4.
 \code{est.betas} is a list of length same as the \code{X} input. Each list shows estimated coefficient of the corresponding covariates using bootstrap samples.
 
 \code{Estimates} is a data frame of the bootstrap output. It contains "Mean", "SD", "2.5\%", and "97.5\%" columns.
-The "Mean" column is calculated by using \code{\link[base:mean]}{mean} function on the \code{est.betas}.
-The "SD" column is calculated by using \code{\link[base:sd]}{sd} function on the \code{est.betas}.
+The "Mean" column is calculated by using \code{\link[base:mean]{mean}} function on the \code{est.betas}.
+The "SD" column is calculated by using \code{\link[stats:sd]{sd}} function on the \code{est.betas}.
 The "2.5\%" and "97.5\%" confidence intervals are calculated using \code{Mean + c(-1, 1)*qnorm(0.975)*SD}.
 }
 \description{

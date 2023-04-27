@@ -1,7 +1,4 @@
-#' @import lme4 rlang
-NULL
-
-#' Bootstrap Samples
+#' @title Bootstrap Samples
 #' @return A list of data.table of length B. Each data table contains `index` column and `no.repeat.id` column.
 #' The `index` column shows the row number of the original dataset that were selected as bootstrap samples.
 #'  Therefore, in order to get the bootstrap data, the user has to use the index column as row number in the original dataset.
