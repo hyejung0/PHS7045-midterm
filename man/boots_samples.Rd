@@ -14,7 +14,10 @@ boots_samples(dat, sub.id, B)
 \item{B}{Natural number. Number of bootstrap samples to create.}
 }
 \value{
-A list of length B, of matrices with index and subjects
+A list of data.table of length B. Each data table contains \code{index} column and \code{no.repeat.id} column.
+The \code{index} column shows the row number of the original dataset that were selected as bootstrap samples.
+Therefore, in order to get the bootstrap data, the user has to use the index column as row number in the original dataset.
+\code{no.repeat.id} column shows the 'sub.id' concatenated by trailing '__#' to represent subjects repeated multiple times.
 }
 \description{
 Bootstrap Samples
@@ -29,5 +32,7 @@ example.dat<-data.frame("Y"=rnorm(n=length(example.subject)),
                         "X3"=rbeta(n=length(example.subject), shape1 = 3, shape2 = 0.5),
                         "subjects"=example.subject)
 output<-boots_samples(dat=example.dat,sub.id = "subjects",B=4) #create 4 bootstrap samples
-output[[1]] #This is the first sample. A data table with two columns, an index column and the new subject names
+head(output[[1]]) #This is the first outcome.
+bootstrap_dat1<-example.dat[output[[1]]$index,] #this is the bootstrap sampled dataset from the first bootstrap run.
+bootstrap_dat1$no.repeat.id<-output[[1]]$no.repeat.id #this code adds the correctly named subjects to the bootstrap data so that when the subject is used for LMER fit, it properly accounts for the subjects.
 }

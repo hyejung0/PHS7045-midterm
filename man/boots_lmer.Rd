@@ -13,14 +13,22 @@ boots_lmer(y, X, dat, boots.samples.list, use.formula = NULL, num_workers = 2L)
 
 \item{dat}{a data frame or data table, which contains y, X. Also should contain the subject column which was used to generate boots.samples.list.}
 
-\item{boots.samples.list}{boots.samples output.}
+\item{boots.samples.list}{\code{\link[boots.lmer:boots_samples]{boots_samples}} output.}
 
 \item{use.formula}{a vector of class formula. This is to be used in lmer fit. If not provided, then a basic additive fixed effects model with random effect of (1|no.repeat.sub.id) will be fit.}
 
 \item{num_workers}{integer. A number of cores to use for parallel computing.}
 }
 \value{
-A list of length B, of linear mixed effects model fits.
+A list of length 4.
+\code{Error.Index} is a vector of logicals. The corresponding \code{boots.samples.list} input where \code{Error.Index ==TRUE} had an error fitting the lme4::lmer function.
+
+\code{est.betas} is a list of length same as the \code{X} input. Each list shows estimated coefficient of the corresponding covariates using bootstrap samples.
+
+\code{Estimates} is a data frame of the bootstrap output. It contains "Mean", "SD", "2.5\%", and "97.5\%" columns.
+The "Mean" column is calculated by using \code{\link[base:mean]}{mean} function on the \code{est.betas}.
+The "SD" column is calculated by using \code{\link[base:sd]}{sd} function on the \code{est.betas}.
+The "2.5\%" and "97.5\%" confidence intervals are calculated using \code{Mean + c(0-1,1)*qnorm(0.975)*SD}.
 }
 \description{
 The function returns a fitted LMER model using bootstrap sample data, and returns inference about the fits.

@@ -1,10 +1,20 @@
 #' Bootstrap Sampled Linear Mixed Effects Models (LMERs)
 #' @description The function returns a fitted LMER model using bootstrap sample data, and returns inference about the fits.
-#' @return A list of length B, of linear mixed effects model fits.
+#' @return A list of length 4.
+#'
+#' `Error.Index` is a vector of logicals. The corresponding `boots.samples.list` input where `Error.Index ==TRUE` had an error fitting the lme4::lmer function.
+#'
+#' `est.betas` is a list of length same as the `X` input. Each list shows estimated coefficient of the corresponding covariates using bootstrap samples.
+#'
+#'  `Estimates` is a data frame of the bootstrap output. It contains "Mean", "SD", "2.5%", and "97.5%" columns.
+#'  The "Mean" column is calculated by using \code{\link[base:mean]}{mean} function on the `est.betas`.
+#'  The "SD" column is calculated by using \code{\link[base:sd]}{sd} function on the `est.betas`.
+#'  The "2.5%" and "97.5%" confidence intervals are calculated using `Mean + c(-1, 1)*qnorm(0.975)*SD`.
+#'
 #' @param y character string. Name of column in each data.table of boots.samples.list, to be used as the outcome in LMER.
 #' @param X a vector of character string.  Names of the of covariates to fit in LMER, as they appear on each dataset of boots.samples.list.
 #' @param dat a data frame or data table, which contains y, X. Also should contain the subject column which was used to generate boots.samples.list.
-#' @param boots.samples.list boots.samples output.
+#' @param boots.samples.list \code{\link[boots.lmer:boots_samples]{boots_samples}} output.
 #' @param use.formula a vector of class formula. This is to be used in lmer fit. If not provided, then a basic additive fixed effects model with random effect of (1|no.repeat.sub.id) will be fit.
 #' @param num_workers integer. A number of cores to use for parallel computing.
 #' @examples
@@ -18,6 +28,13 @@
 #'                         "subjects"=example.subject)
 #' output<-boots_samples(dat=example.dat,sub.id = "subjects",B=4) #create 4 bootstrap samples
 #' lmer.out<-boots_lmer(y="Y", X=c("X1","X2","X3"), dat=example.dat, boots.samples.list = output)
+#'
+#' ##Print the summary
+#' summary(lmer.out)
+#'
+#' ##Boxplot of the estimated coefficients
+#' plot(lmer.out)
+#'
 #' @export
 boots_lmer<-function(y,X,dat,boots.samples.list,use.formula=NULL, num_workers=2L){
 
@@ -152,7 +169,7 @@ boots_lmer<-function(y,X,dat,boots.samples.list,use.formula=NULL, num_workers=2L
 
   #return a list with class boots_output
   structure(list("Error.Index"=Error.Index, #index of bootstrap samples that resulted in error. NA if there were no errors.
-                 "all.fits"=all.fits,
+                 #"all.fits"=all.fits, #Printing the fits make the file too big.
                  "est.betas"=est.betas,
                  "Estimates"=output.dat,
                  "error.message"=error.message)

@@ -56,7 +56,8 @@ usethis::use_data(example.dat)
 We have saved this data, so we will load it to use it. 
 
 ```{r}
-data(example.dat, package="boots.lmer")
+ data(example.dat, package="boots.lmer")
+# load(file.path(system.file("big-data",package="boots.lmer"), "example.dat.rda"))
 knitr::kable(head(example.dat), caption = "Table 1. Example data set.")
 ```
 
@@ -80,7 +81,7 @@ To make sure that the rest of explanation makes sense, we have save the data and
 
 ```{r}
 data(output, package="boots.lmer")
-
+# load(file.path(system.file("big-data",package="boots.lmer"), "output.rda"))
 knitr::kable(head(output[[1]]),caption = "Table 2. Four boostrap samples of example.dat data sets. The sampling unit is subject, hence the number of rows of each data set is expected to be different from one another.",row.names = FALSE)
 ```
 
@@ -113,6 +114,8 @@ Here's the summary:
 
 ```{r}
 data(lmer_out, package="boots.lmer")
+# load(file.path(system.file("big-data",package="boots.lmer"), "lmer_out.rda"))
+
 summary(lmer_out)
 ```
 

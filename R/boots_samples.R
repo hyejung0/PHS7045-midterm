@@ -2,7 +2,10 @@
 NULL
 
 #' Bootstrap Samples
-#' @return A list of length B, of matrices with index and subjects
+#' @return A list of data.table of length B. Each data table contains `index` column and `no.repeat.id` column.
+#' The `index` column shows the row number of the original dataset that were selected as bootstrap samples.
+#'  Therefore, in order to get the bootstrap data, the user has to use the index column as row number in the original dataset.
+#'  `no.repeat.id` column shows the 'sub.id' concatenated by trailing '__#' to represent subjects repeated multiple times.
 #' @param dat data frame or data table of our interest
 #' @param sub.id String vector, the column name of the subject ID's.
 #' @param B Natural number. Number of bootstrap samples to create.
@@ -16,7 +19,9 @@ NULL
 #'                         "X3"=rbeta(n=length(example.subject), shape1 = 3, shape2 = 0.5),
 #'                         "subjects"=example.subject)
 #' output<-boots_samples(dat=example.dat,sub.id = "subjects",B=4) #create 4 bootstrap samples
-#' output[[1]] #This is the first sample. A data table with two columns, an index column and the new subject names
+#' head(output[[1]]) #This is the first outcome.
+#' bootstrap_dat1<-example.dat[output[[1]]$index,] #this is the bootstrap sampled dataset from the first bootstrap run.
+#' bootstrap_dat1$no.repeat.id<-output[[1]]$no.repeat.id #this code adds the correctly named subjects to the bootstrap data so that when the subject is used for LMER fit, it properly accounts for the subjects.
 #' @export
 boots_samples<-function(dat, sub.id,B){
 
@@ -53,22 +58,8 @@ boots_samples<-function(dat, sub.id,B){
       dat_return<-data.table::as.data.table(dat_return)
       dat_return[,index:=as.numeric(index)]
       dat_return
-      ##########################################
 
-      ###### return data frame ######
-      # temp.dat<-do.call(rbind, lapply(temp, data.frame))
-      # complete.dat<-dat[temp.dat$index,]
-      # complete.dat[,"no.repeat.sub.id"]<-temp.dat[,"no.repeat.id"]
-      # return(complete.dat)
-      ##########################################
 
-      # #bind the index and no.repeat.id. as rows
-      # temp.dat<-do.call(rbind, lapply(temp, data.table::data.table))
-      # complete.dat<-data.table::as.data.table(dat[temp.dat$index,])
-      # # complete.dat[,no.repeat.sub.id:=(temp.dat$no.repeat.id)] # add the new subject ID column, with no repetition
-      # # complete.dat$no.repeat.sub.id<-temp.dat$no.repeat.id
-      # complete.dat[,"no.repeat.sub.id"]<-temp.dat$no.repeat.id
-      # return(complete.dat)
     }
     )
 
