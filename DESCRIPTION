@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Hyejung", "Lee", , "hyejung.lee@utah.edu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5293-4134"))
-Description: boots.lmer function returns a list of linear mixed effects models. The length of the list is the same number as the number of bootstrap samples.  
+Description: boots.lmer function returns a list of linear mixed effects models.  
 License: GPL(>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
