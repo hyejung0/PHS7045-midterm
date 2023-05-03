@@ -41,13 +41,17 @@ A list of length 4.
 The "Mean" column is calculated by using \code{\link[base:mean]{mean}} function on the \code{est.betas}.
 The "SD" column is calculated by using \code{\link[stats:sd]{sd}} function on the \code{est.betas}.
 The "2.5\%" and "97.5\%" confidence intervals are calculated using \code{Mean + c(-1, 1)*qnorm(0.975)*SD}.
+
+A boxplot of the estimated effects of covarites from bootstrap samples.
+
+Inference about the bootstrap sampled LMER fits.
 }
 \description{
 The function returns a fitted LMER model using bootstrap sample data, and returns inference about the fits.
 
-This is a generic function returns to an object class \code{boots_output} from \code{\link[boots.lmer:boots_lmer]{boots_lmer}}. It returns a boxplot of the estimated effects of covarites from bootstrap samples.
+This is a generic function returns to an object class \code{boots_output} from \code{\link[boots.lmer:boots_lmer]{boots_lmer}}.
 
-This is a generic function returns to an object class \code{boots_output} from \code{\link[boots.lmer:boots_lmer]{boots_lmer}}. It returns inference about the bootstrap sampled LMER fits.
+This is a generic function returns to an object class \code{boots_output} from \code{\link[boots.lmer:boots_lmer]{boots_lmer}}.
 }
 \examples{
 set.seed(1249)

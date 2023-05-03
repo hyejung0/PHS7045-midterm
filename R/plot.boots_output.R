@@ -1,10 +1,11 @@
 #' @rdname boots_lmer
 #' @title Plotting output of bootstrap Sampled Linear Mixed Effects Models
-#' @description This is a generic function returns to an object class \code{boots_output} from \code{\link[boots.lmer:boots_lmer]{boots_lmer}}. It returns a boxplot of the estimated effects of covarites from bootstrap samples.
+#' @description This is a generic function returns to an object class \code{boots_output} from \code{\link[boots.lmer:boots_lmer]{boots_lmer}}.
 #' @param x An object of class \code{boots_output}.
 #' @param y Ignored.
 #' @param ... Further arguments passed to
 #' \code{\link[graphics:plot.window]{plot.window}}.
+#' @return A boxplot of the estimated effects of covarites from bootstrap samples.
 #' @export
 plot.boots_output<- function(x,y,...) {
 
