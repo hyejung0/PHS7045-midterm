@@ -53,7 +53,7 @@ example.dat<-data.frame("Y"=rnorm(n=length(example.subject)),
 usethis::use_data(example.dat)
 ```
 
-We have saved this data, so we will load it to use it. 
+We have saved the above data, so we will load it, instead of creating it again. 
 
 ```{r}
  data(example.dat, package="boots.lmer")
@@ -85,7 +85,7 @@ data(output, package="boots.lmer")
 knitr::kable(head(output[[1]]),caption = "Table 2. Four boostrap samples of example.dat data sets. The sampling unit is subject, hence the number of rows of each data set is expected to be different from one another.",row.names = FALSE)
 ```
 
-The output is a list of 4, where each list conatins a `data.table` object with column `index` and `no.repeat.id`. The `index` column gives the row number of the oriianl data set (`example.dat`) to select as bootstrap sample. The `no.repeat.sub.id` column returns the bootstrap selected subjects from the `example.dat$subject` column, with trailing `__#`. The `#` shows the number of times the subject was included in the bootstrap sampling. 
+The output is a list of 4, where each list contains a `data.table` object with column `index` and `no.repeat.id`. The `index` column gives the row number of the original data set (`example.dat`) to select as bootstrap sample. The `no.repeat.sub.id` column returns the bootstrap selected subjects from the `example.dat$subject` column, with trailing `__#`. The `#` shows the number of times the subject was included in the bootstrap sampling. 
 
 For example, 
 ```{r}
@@ -102,7 +102,7 @@ In the first bootstrap sample, Beth and Sarah have been sampled once, and Chris 
 # Fit boots_lmer function
 
 
-`boots_lmer` function requires at least 3 inputs. First, we need to input a string the outcome variable for `y`, and a vector of characters of covarites `X` as they appear in our data set `example.dat`. We then have to input the original data in `dat`, which is example.dat. We can also input number of cores (`num_workers`) and user-defined LMER formula (`formula`) if desires. The default number of cores to use is 2 and default formula is additive model of all covariates on outcome, with the random effect of the subject returned from the `boots_samples` function. 
+`boots_lmer` function requires at least 3 inputs. First, we need to input a string the outcome variable for `y`, and a vector of characters of covarites `X` as they appear in our data set `example.dat`. We then have to input the original data in `dat`, which is `example.dat`. We can also input number of cores (`num_workers`) and user-defined LMER formula (`formula`) if desires. The default number of cores to use is 2 and default formula is additive model of all covariates on outcome, with the random effect of the subject returned from the `boots_samples` function. 
 
 ```r
 set.seed(4484)

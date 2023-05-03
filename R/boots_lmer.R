@@ -130,7 +130,7 @@ boots_lmer<-function(y,X,dat,boots.samples.list,use.formula=NULL, num_workers=2L
   }
 
   #save number of error and print out as a message in summary
-  error.message<-print(paste0("There were ",sum(MyError)," error(s) from LMER fitting, and they were omitted from the analyses."))
+  error.message<-paste0("There were ",sum(MyError)," error(s) from LMER fitting, and they were omitted from the analyses.")
 
 
 
@@ -163,8 +163,6 @@ boots_lmer<-function(y,X,dat,boots.samples.list,use.formula=NULL, num_workers=2L
   output.dat<-do.call(rbind,output.dat)
   colnames(output.dat)<-c("Mean","SD","2.5%","97.5%")
   rownames(output.dat)<-X
-
-  #print(output.dat)
 
 
   #return a list with class boots_output

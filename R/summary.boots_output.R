@@ -1,9 +1,9 @@
+#' @title Summary output of bootstrap Sampled Linear Mixed Effects Models
 #' @rdname boots_lmer
-#' Summary print of the boots.lmer output
-#' @export
+#' @description This is a generic function returns to an object class \code{boots_output} from \code{\link[boots.lmer:boots_lmer]{boots_lmer}}. It returns inference about the bootstrap sampled LMER fits.
 #' @param x An object of class \code{boots_output}.
 #' @param ... Further arguments passed to
-
+#' @export
 summary.boots_output<- function(object,...) {
 
 

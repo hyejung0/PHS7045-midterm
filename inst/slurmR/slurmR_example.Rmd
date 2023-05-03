@@ -1,0 +1,161 @@
+---
+title: "SlurmR example"
+author: "Hyejung Lee"
+date: "4/28/2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+We can use high performance computing to run `boots.lmer`. Here is an example script to generate bootstrap samples and inference using linear mixed effects model function. This Rmd file contains example R code and slurm code to run the function.
+
+Below is the code I generated as a R script.:
+
+```r
+nsims  <- 100 #number of simulations
+n      <- 100 #number of bootstrap samples to generate for each simulation 
+ncores <- 16L #number of cores to use for parallel in boots_lmer function
+njobs<-4L #number of arrays
+
+
+#########
+
+library(boots.lmer)
+
+
+simfun <- function(i){
+  data(example.dat)
+  output<-boots_samples(dat=example.dat,sub.id = "subjects",B=n) #create n bootstrap samples
+  lmer.out<-boots_lmer(y="Y",
+                       X=c("X1","X2","X3"),
+                       dat=example.dat,
+                       boots.samples.list = output,
+                       num_workers = ncores) 
+  lmer.out$est.betas #Just return estimated betas
+}
+########
+# Setting up slurmR
+library(slurmR) # This also loads the parallel package
+
+system.time(
+ans <- Slurm_lapply(
+  1:nsims, simfun,
+  njobs    = njobs,
+  mc.cores = 1L,
+  plan     = "collect",
+  tmp_path = "/scratch/general/nfs1/u1317537", # This is where all temp files will be exported
+  sbatch_opt=list(account="smithp-guest",
+                  partition="ash-guest"),
+  export = c("ncores","n")
+)
+)
+
+saveRDS(ans, "example_slurmR2.rds")
+```
+
+Here's the slurm file that goes along with the R file.:
+
+```text
+#!/bin/sh
+#SBATCH --job-name=example_slurmR2
+#SBATCH --time=00:10:00
+#SBATCH --account=smithp-guest
+#SBATCH --partition=ash-guest
+
+
+module load R/4.2.2
+Rscript --vanilla example_slurmR2.R
+```
+
+On high performance computing, you will have to have these two files (.R and .slurm files) located in the same folder. Then we can execute the following line of code on command line:
+
+```text
+$ sbatch example_slurmR2.slurm
+```
+
+
+When I ran the file above, I noted in that in a log file, I got :
+```{r}
+#  user  system elapsed 
+#  6.260   2.764  53.862 
+
+```
+
+Let's compare it's speed with running the function in a local computer. 
+
+
+
+
+The high performance computing took 1 minute to run to run 100 simulations of 100 bootstrap samples with 4 arrays and 16 cores. 
+
+As a comparison, the same number of simulations and bootstrap copies are run on my computer. 
+```r
+library(boots.lmer)
+simfun <- function(i){
+  data(example.dat)
+  output<-boots_samples(dat=example.dat,sub.id = "subjects",B=100) #create n bootstrap samples
+  lmer.out<-boots_lmer(y="Y",
+                       X=c("X1","X2","X3"),
+                       dat=example.dat,
+                       boots.samples.list = output,
+                       num_workers = parallel::detectCores()) 
+  lmer.out$est.betas #Just return estimated betas
+}
+
+system.time(
+lapply( 1:100, simfun)
+)
+
+
+# user    system  elapsed 
+# 327.611 141.303  98.583
+```
+
+
+With `parallel::detectCores()`, it is shown that I have `r parallel::detectCores()` cores to run on my local machine. In comparison, we can see that using the `slurmR` package on high performance computing cut down the running time by almost half.
+
+
+
+The saved data, `example_slurmR2.rds`, was saved, and we load it here. 
+
+```{r}
+example_slurm<-readRDS("example_slurmR2.rds")
+length(example_slurm)
+length(example_slurm[[1]]$X1) #length of estimated beta of X1 for the 1st simulation 
+```
+
+We now concatenate the 100 simulations, each estimated betas separately. We have 3 estimated betas, one for each `X_i`.
+```{r}
+#X1
+beta1<-lapply(example_slurm, `[[`, "X1") 
+beta1<-unlist(beta1)
+
+#X2
+beta2<-lapply(example_slurm, `[[`, "X2") 
+beta2<-unlist(beta2)
+
+#X3
+beta3<-lapply(example_slurm, `[[`, "X3") 
+beta3<-unlist(beta3)
+```
+
+
+We now show their boxplots:
+
+```{r}
+plot.dat<-data.frame(
+  betas<-rep(c("beta1","beta2","beta3"),each=length(beta1)),
+  bootstrap_estimates<-c(beta1,beta2,beta3)
+)
+
+boxplot(bootstrap_estimates~betas, 
+        data=plot.dat,
+        horizontal = T,
+        main="Bootstrap density of the \n estimated effects of the covariate(s)",
+        xlab="Bootstrap estimates", 
+        ylab="Eestimated effects")
+```
+
+
