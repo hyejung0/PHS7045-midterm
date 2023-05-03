@@ -29,6 +29,8 @@ boots_lmer(y, X, dat, boots.samples.list, use.formula = NULL, num_workers = 2L)
 \item{x}{An object of class \code{boots_output}.}
 
 \item{...}{Further arguments passed to}
+
+\item{object}{An object of class \code{boots_output}.}
 }
 \value{
 A list of length 4.

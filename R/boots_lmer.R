@@ -1,3 +1,5 @@
+#' @importFrom stats as.formula formula sd qnorm
+
 #' @title Bootstrap Sampled Linear Mixed Effects Models (LMERs)
 #' @description The function returns a fitted LMER model using bootstrap sample data, and returns inference about the fits.
 #' @return A list of length 4.

@@ -12,10 +12,11 @@ RoxygenNote: 7.2.3
 Suggests: 
     knitr,
     rmarkdown,
+    roxygen2,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Imports:
-    rlang,
+    rlang (>= 0.4.11),
     lme4,
     stringr
 Depends:
