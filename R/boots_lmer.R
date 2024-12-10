@@ -36,7 +36,7 @@
 #'
 #' ##Boxplot of the estimated coefficients
 #' plot(lmer.out)
-#'
+#' @import data.table
 #' @export
 boots_lmer<-function(y,X,dat,boots.samples.list,use.formula=NULL, num_workers=2L){
 
